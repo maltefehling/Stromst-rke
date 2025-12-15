@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <!-- TIPP FÜR GITHUB: Benenne diese Datei beim Upload am besten in 'index.html' um. 
+         Dann wird sie von GitHub Pages automatisch als Startseite erkannt. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kompetenzcheck: Elektrische Stromstärke</title>
+    <style>
+        /* --- STANDARD DESIGN (BEARBEITUNGS-MODUS) --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 25px; }
+
+        /* Ergebnis-Box (wird erst eingeblendet) */
+        #result-box {
+            display: none;
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 6px solid #3498db;
+        }
+
+        /* Bilder-Box */
+        .material-box {
+            background-color: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .material-box img, .material-box svg { max-width: 100%; height: auto; max-height: 200px; }
+
+        .question-text { font-weight: 600; font-size: 1.1em; margin-bottom: 15px; line-height: 1.4; }
+
+        .options-list { list-style-type: none; padding: 0; margin: 0; }
+
+        .option-item {
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: flex-start;
+        }
+        .option-item:hover { background-color: #e3f2fd; border-color: #3498db; }
+
+        input[type="radio"] { margin-right: 12px; margin-top: 4px; transform: scale(1.2); }
+
+        .explanation {
+            display: none; /* Im Quiz-Modus versteckt */
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #2e7d32;
+            width: 100%;
+        }
+
+        .btn-container { text-align: center; margin-top: 30px; margin-bottom: 50px; }
+
+        button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
+        button:hover { background-color: #34495e; }
+
+
+        /* --- MUSTERLÖSUNG-MODUS (NACH KLICK AUF AUSWERTEN) --- */
+        /* Extrem kompakt für Screenshots */
+        
+        body.results-mode {
+            background-color: white; 
+            padding: 5px;
+            max-width: 100%;
+        }
+
+        /* 1. Alles ausblenden, was wir nicht brauchen */
+        body.results-mode .subtitle,
+        body.results-mode .btn-container, 
+        body.results-mode .material-box,  /* Bilder weg */
+        body.results-mode input[type="radio"] { /* Radio-Kreise weg */
+            display: none !important;
+        }
+
+        /* Titel sehr klein */
+        body.results-mode h1 {
+            font-size: 1.1rem;
+            margin: 0 0 5px 0;
+            padding: 0;
+        }
+
+        /* 2. FALSCHE ANTWORTEN KOMPLETT ENTFERNEN */
+        body.results-mode .option-item[data-correct="false"] {
+            display: none !important;
+        }
+
+        /* 3. Karten extrem kompakt machen */
+        body.results-mode .question-card {
+            box-shadow: none;
+            border: none;
+            border-bottom: 1px solid #eee; /* Sehr feine Trennlinie */
+            border-radius: 0;
+            padding: 3px 0; /* Minimaler Abstand */
+            margin-bottom: 0;
+            border-left: none; /* Blauen Balken weg */
+        }
+
+        /* 4. Fragetext kompakt */
+        body.results-mode .question-text {
+            margin-bottom: 0px;
+            font-size: 0.85rem; /* Kleine Schrift */
+            color: #000;
+            line-height: 1.2;
+        }
+
+        /* 5. Die einzig verbleibende (richtige) Antwort stylen */
+        body.results-mode .option-item[data-correct="true"] {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: #1e8e3e; /* Dunkelgrün für die Lösung */
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: default;
+            display: block; 
+            line-height: 1.2;
+        }
+
+        /* 6. Erklärung stylen - INLINE damit es Platz spart */
+        body.results-mode .explanation {
+            display: inline; 
+            margin-left: 5px;
+            font-style: italic;
+            color: #666;
+            font-weight: normal;
+            font-size: 0.8rem;
+        }
+        
+        /* Ergebnisbox winzig */
+        body.results-mode #result-box {
+            padding: 2px;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            border: 1px solid #28a745;
+        }
+        
+        /* Hinweis für Screenshot */
+        body.results-mode #screenshot-hint {
+            display: block !important;
+            text-align: center;
+            background: #fff3cd;
+            color: #856404;
+            padding: 2px;
+            font-size: 0.7rem;
+            margin-bottom: 2px;
+            border-radius: 4px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1 id="page-title">Kompetenzcheck: Stromstärke</h1>
+    <p class="subtitle">Grundverständnis, Einheiten und Messen</p>
+
+    <div id="screenshot-hint" style="display:none;">📸 <strong>Musterlösung:</strong> Mache jetzt einen Screenshot für dein Heft!</div>
+
+    <div id="result-box"></div>
+
+    <div id="quiz-container"></div>
+
+    <div class="btn-container">
+        <button onclick="evaluateQuiz()" id="submit-btn">Auswerten & Musterlösung anzeigen</button>
+    </div>
+
+<script>
+    // --- BILDER (SVG) ---
+    const imgFlow = `<svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#e74c3c" /></marker></defs><rect x="20" y="20" width="160" height="40" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/><ellipse cx="100" cy="40" rx="10" ry="20" fill="none" stroke="#e74c3c" stroke-width="2" stroke-dasharray="4"/><text x="85" y="15" font-size="12" fill="#e74c3c">Querschnitt</text><circle cx="60" cy="40" r="4" fill="#3498db"/><circle cx="80" cy="30" r="4" fill="#3498db"/><circle cx="120" cy="50" r="4" fill="#3498db"/><line x1="40" y1="40" x2="150" y2="40" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow)" opacity="0.5"/></svg>`;
+    const imgMultimeter = `<svg width="150" height="80" viewBox="0 0 150 80" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="130" height="60" fill="#333" rx="5"/><rect x="20" y="20" width="110" height="30" fill="#9cdba4"/><text x="75" y="42" font-family="monospace" font-size="20" text-anchor="middle" fill="black">0.350</text><text x="110" y="42" font-family="sans-serif" font-size="10" fill="black">A</text></svg>`;
+    const imgElectronPile = `<svg width="150" height="60" viewBox="0 0 150 60" xmlns="http://www.w3.org/2000/svg"><text x="10" y="20" font-size="12" fill="#555">1 Elektron:</text><circle cx="80" cy="15" r="3" fill="blue"/><text x="10" y="45" font-size="12" fill="#555">1 Ampere:</text><rect x="60" y="35" width="80" height="15" fill="blue" opacity="0.5"/><text x="100" y="47" font-size="9" fill="white" text-anchor="middle">6 Trillionen</text></svg>`;
+
+
+    // --- FRAGEN KATALOG ---
+    const quizData = [
+        {
+            material: imgFlow,
+            question: "1. Stell dir vor, du könntest in das Kabel hineinsehen. Was genau gibt die Stromstärke an?",
+            options: [
+                { text: "Wie schnell die Elektronen sind.", correct: false },
+                { text: "Wie viele Elektronen pro Sekunde durch den Querschnitt fließen (Ladung pro Zeit).", correct: true, rationale: "Stromstärke = Menge an Ladung pro Zeit." },
+                { text: "Wie viel Energie in jedem Elektron steckt.", correct: false }
+            ]
+        },
+        {
+            question: "2. Jan behauptet: „Eine Lampe verbraucht Strom. Nach der Lampe sind weniger Elektronen da.“",
+            options: [
+                { text: "Richtig. Elektronen werden zu Licht.", correct: false },
+                { text: "Falsch. Elektronen werden nicht verbraucht (Ladungserhaltung).", correct: true, rationale: "Die Elektronen fließen zurück zur Quelle. Nur die Energie wird genutzt." },
+                { text: "Teilweise richtig.", correct: false }
+            ]
+        },
+        {
+            material: imgElectronPile,
+            question: "3. Warum benutzen Physiker die Einheit 'Ampere', statt Elektronen zu zählen?",
+            options: [
+                { text: "Weil man Elektronen nicht sehen kann.", correct: false },
+                { text: "Weil die Zahl (6 Trillionen pro Sekunde) viel zu groß zum Rechnen wäre.", correct: true, rationale: "1 Ampere ist ein handliches 'Paket' für eine riesige Zahl Elektronen." },
+                { text: "Weil die Anzahl schwankt.", correct: false }
+            ]
+        },
+        {
+            material: imgMultimeter, 
+            question: "4. Das Messgerät zeigt 0,350 A. Wie viel ist das in mA?",
+            options: [
+                { text: "350 mA", correct: true, rationale: "0,350 A · 1000 = 350 mA." },
+                { text: "0,35 mA", correct: false },
+                { text: "35 A", correct: false },
+                { text: "3500 mA", correct: false }
+            ]
+        },
+        {
+            question: "5. Ein Hörgerät braucht 0,0014 A. Wie viel mA sind das?",
+            options: [
+                { text: "0,14 mA", correct: false },
+                { text: "1,4 mA", correct: true, rationale: "Komma um 3 Stellen verschieben: 0,0014 -> 1,4." },
+                { text: "14 mA", correct: false },
+                { text: "1400 mA", correct: false }
+            ]
+        },
+        {
+            question: "6. Durch Draht B fließen doppelt so viel Ampere wie durch Draht A. Was bedeutet das?",
+            options: [
+                { text: "Die Elektronen sind schneller.", correct: false },
+                { text: "Es fließen doppelt so viele Elektronen pro Sekunde hindurch.", correct: true, rationale: "Doppelte Stromstärke = Doppelte Menge an Ladungsträgern." },
+                { text: "Die Elektronen sind größer.", correct: false }
+            ]
+        },
+        {
+            question: "7. An derselben Steckdose zieht ein Wasserkocher viel mehr Strom als ein Handyladegerät. Wer bestimmt die Stromstärke?",
+            options: [
+                { text: "Die Steckdose. Sie teilt dem Wasserkocher aktiv mehr Strom zu.", correct: false },
+                { text: "Der Energiewandler (das Gerät). Je nach Bauart (Widerstand) fließt viel oder wenig Strom.", correct: true, rationale: "Die Spannung ist fest. Das Gerät bestimmt, wie viel Strom es 'braucht'." },
+                { text: "Das Kabel. Dickere Kabel erzeugen automatisch mehr Strom.", correct: false }
+            ]
+        }
+    ];
+
+    const container = document.getElementById('quiz-container');
+
+    // Quiz erstellen
+    quizData.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        
+        // Bild Container
+        if (item.material) {
+            const matBox = document.createElement('div');
+            matBox.className = 'material-box';
+            matBox.innerHTML = item.material; 
+            card.appendChild(matBox);
+        }
+
+        const title = document.createElement('div');
+        title.className = 'question-text';
+        title.innerHTML = item.question;
+        card.appendChild(title);
+
+        const list = document.createElement('ul');
+        list.className = 'options-list';
+
+        item.options.forEach((opt, optIndex) => {
+            const li = document.createElement('li');
+            li.className = 'option-item'; 
+            li.dataset.correct = opt.correct; // WICHTIG für das CSS später
+            
+            // Klick-Event für Auswahl
+            li.onclick = () => {
+                const radio = document.getElementById('q' + index + 'o' + optIndex);
+                if(radio) radio.checked = true;
+            };
+
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = 'question' + index;
+            radio.id = 'q' + index + 'o' + optIndex;
+            
+            const label = document.createElement('label');
+            label.htmlFor = 'q' + index + 'o' + optIndex;
+            label.innerText = opt.text;
+
+            li.appendChild(radio);
+            li.appendChild(label);
+
+            if(opt.rationale) {
+                const explanation = document.createElement('div');
+                explanation.className = 'explanation';
+                explanation.innerHTML = '👉 ' + opt.rationale;
+                li.appendChild(explanation);
+            }
+
+            list.appendChild(li);
+        });
+
+        card.appendChild(list);
+        container.appendChild(card);
+    });
+
+    // Auswertungs-Funktion
+    function evaluateQuiz() {
+        let score = 0;
+        const total = quizData.length;
+        
+        quizData.forEach((item, index) => {
+            const selected = document.querySelector(`input[name="question${index}"]:checked`);
+            if (selected) {
+                const li = selected.parentElement;
+                if (li.dataset.correct === "true") {
+                    score++;
+                }
+            }
+        });
+
+        const percent = Math.round((score / total) * 100);
+        
+        // Ergebnis anzeigen
+        const resultBox = document.getElementById('result-box');
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = `<strong>Dein Ergebnis: ${score} / ${total} richtig (${percent}%)</strong>`;
+        
+        // Modus wechseln (CSS macht den Rest)
+        document.body.classList.add('results-mode');
+        
+        // Titel ändern für Screenshot
+        document.getElementById('page-title').innerText = "Musterlösung: Stromstärke";
+        
+        // Nach oben scrollen
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>

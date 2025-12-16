@@ -78,6 +78,15 @@
             width: 100%;
         }
 
+        .status-msg {
+            display: none; /* Standardmäßig versteckt */
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
         .btn-container { text-align: center; margin-top: 30px; margin-bottom: 50px; }
 
         button {
@@ -95,7 +104,6 @@
 
 
         /* --- MUSTERLÖSUNG-MODUS (NACH KLICK AUF AUSWERTEN) --- */
-        /* Extrem kompakt für Screenshots */
         
         body.results-mode {
             background-color: white; 
@@ -103,52 +111,56 @@
             max-width: 100%;
         }
 
-        /* 1. Alles ausblenden, was wir nicht brauchen */
         body.results-mode .subtitle,
         body.results-mode .btn-container, 
-        body.results-mode .material-box,  /* Bilder weg */
-        body.results-mode input[type="radio"] { /* Radio-Kreise weg */
+        body.results-mode .material-box, 
+        body.results-mode input[type="radio"] { 
             display: none !important;
         }
 
-        /* Titel sehr klein */
         body.results-mode h1 {
             font-size: 1.1rem;
             margin: 0 0 5px 0;
             padding: 0;
         }
 
-        /* 2. FALSCHE ANTWORTEN KOMPLETT ENTFERNEN */
+        /* Falsche Antworten ausblenden */
         body.results-mode .option-item[data-correct="false"] {
             display: none !important;
         }
 
-        /* 3. Karten extrem kompakt machen */
+        /* Karten kompakt */
         body.results-mode .question-card {
             box-shadow: none;
             border: none;
-            border-bottom: 1px solid #eee; /* Sehr feine Trennlinie */
+            border-bottom: 1px solid #eee;
             border-radius: 0;
-            padding: 3px 0; /* Minimaler Abstand */
+            padding: 5px 0; 
             margin-bottom: 0;
-            border-left: none; /* Blauen Balken weg */
+            border-left: none;
         }
 
-        /* 4. Fragetext kompakt */
         body.results-mode .question-text {
-            margin-bottom: 0px;
-            font-size: 0.85rem; /* Kleine Schrift */
+            margin-bottom: 2px;
+            font-size: 0.85rem;
             color: #000;
             line-height: 1.2;
+            display: inline; /* Text inline damit Status daneben passt */
         }
 
-        /* 5. Die einzig verbleibende (richtige) Antwort stylen */
+        /* Status Nachricht anzeigen */
+        body.results-mode .status-msg {
+            display: block; 
+            margin-bottom: 2px;
+        }
+
+        /* Richtige Antwort */
         body.results-mode .option-item[data-correct="true"] {
             background-color: transparent;
             border: none;
             padding: 0;
             margin: 0;
-            color: #1e8e3e; /* Dunkelgrün für die Lösung */
+            color: #1e8e3e;
             font-weight: bold;
             font-size: 0.85rem;
             cursor: default;
@@ -156,7 +168,6 @@
             line-height: 1.2;
         }
 
-        /* 6. Erklärung stylen - INLINE damit es Platz spart */
         body.results-mode .explanation {
             display: inline; 
             margin-left: 5px;
@@ -166,7 +177,6 @@
             font-size: 0.8rem;
         }
         
-        /* Ergebnisbox winzig */
         body.results-mode #result-box {
             padding: 2px;
             margin-bottom: 5px;
@@ -174,7 +184,6 @@
             border: 1px solid #28a745;
         }
         
-        /* Hinweis für Screenshot */
         body.results-mode #screenshot-hint {
             display: block !important;
             text-align: center;
@@ -216,8 +225,8 @@
             material: imgFlow,
             question: "1. Stell dir vor, du könntest in das Kabel hineinsehen. Was genau gibt die Stromstärke an?",
             options: [
-                { text: "Wie schnell die Elektronen sind.", correct: false },
                 { text: "Wie viele Elektronen pro Sekunde durch den Querschnitt fließen (Ladung pro Zeit).", correct: true, rationale: "Stromstärke = Menge an Ladung pro Zeit." },
+                { text: "Wie schnell die Elektronen sind.", correct: false },
                 { text: "Wie viel Energie in jedem Elektron steckt.", correct: false }
             ]
         },
@@ -225,8 +234,8 @@
             question: "2. Jan behauptet: „Eine Lampe verbraucht Strom. Nach der Lampe sind weniger Elektronen da.“",
             options: [
                 { text: "Richtig. Elektronen werden zu Licht.", correct: false },
-                { text: "Falsch. Elektronen werden nicht verbraucht (Ladungserhaltung).", correct: true, rationale: "Die Elektronen fließen zurück zur Quelle. Nur die Energie wird genutzt." },
-                { text: "Teilweise richtig.", correct: false }
+                { text: "Teilweise richtig.", correct: false },
+                { text: "Falsch. Elektronen werden nicht verbraucht (Ladungserhaltung).", correct: true, rationale: "Die Elektronen fließen zurück zur Quelle. Nur die Energie wird genutzt." }
             ]
         },
         {
@@ -242,8 +251,8 @@
             material: imgMultimeter, 
             question: "4. Das Messgerät zeigt 0,350 A. Wie viel ist das in mA?",
             options: [
-                { text: "350 mA", correct: true, rationale: "0,350 A · 1000 = 350 mA." },
                 { text: "0,35 mA", correct: false },
+                { text: "350 mA", correct: true, rationale: "0,350 A · 1000 = 350 mA." },
                 { text: "35 A", correct: false },
                 { text: "3500 mA", correct: false }
             ]
@@ -252,16 +261,16 @@
             question: "5. Ein Hörgerät braucht 0,0014 A. Wie viel mA sind das?",
             options: [
                 { text: "0,14 mA", correct: false },
-                { text: "1,4 mA", correct: true, rationale: "Komma um 3 Stellen verschieben: 0,0014 -> 1,4." },
+                { text: "1400 mA", correct: false },
                 { text: "14 mA", correct: false },
-                { text: "1400 mA", correct: false }
+                { text: "1,4 mA", correct: true, rationale: "Komma um 3 Stellen verschieben: 0,0014 -> 1,4." }
             ]
         },
         {
             question: "6. Durch Draht B fließen doppelt so viel Ampere wie durch Draht A. Was bedeutet das?",
             options: [
-                { text: "Die Elektronen sind schneller.", correct: false },
                 { text: "Es fließen doppelt so viele Elektronen pro Sekunde hindurch.", correct: true, rationale: "Doppelte Stromstärke = Doppelte Menge an Ladungsträgern." },
+                { text: "Die Elektronen sind schneller.", correct: false },
                 { text: "Die Elektronen sind größer.", correct: false }
             ]
         },
@@ -276,6 +285,14 @@
     ];
 
     const container = document.getElementById('quiz-container');
+
+    // Funktion zum zufälligen Mischen eines Arrays (Fisher-Yates Shuffle)
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
 
     // Quiz erstellen
     quizData.forEach((item, index) => {
@@ -297,6 +314,9 @@
 
         const list = document.createElement('ul');
         list.className = 'options-list';
+
+        // HIER WERDEN DIE ANTWORTEN GEMISCHT:
+        shuffleArray(item.options);
 
         item.options.forEach((opt, optIndex) => {
             const li = document.createElement('li');
@@ -340,14 +360,36 @@
         let score = 0;
         const total = quizData.length;
         
+        // Alte Status-Nachrichten löschen (falls mehrfach geklickt)
+        document.querySelectorAll('.status-msg').forEach(el => el.remove());
+
         quizData.forEach((item, index) => {
+            const card = container.children[index];
             const selected = document.querySelector(`input[name="question${index}"]:checked`);
+            
+            // Feedback-Element erstellen
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'status-msg';
+
             if (selected) {
                 const li = selected.parentElement;
                 if (li.dataset.correct === "true") {
                     score++;
+                    statusDiv.innerHTML = "✅ Richtig";
+                    statusDiv.style.color = "#1e8e3e";
+                } else {
+                    statusDiv.innerHTML = "❌ Leider falsch";
+                    statusDiv.style.color = "#d93025";
                 }
+            } else {
+                statusDiv.innerHTML = "⚠️ Nicht beantwortet";
+                statusDiv.style.color = "#e67c73";
             }
+            
+            // Status ganz oben in die Karte (oder über die Antworten) einfügen
+            // Hier fügen wir es direkt über der Options-Liste ein
+            const optionsList = card.querySelector('.options-list');
+            card.insertBefore(statusDiv, optionsList);
         });
 
         const percent = Math.round((score / total) * 100);
